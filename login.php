@@ -13,7 +13,7 @@ $error_msg = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
   $email = $_POST["email"];
-  $pass = $_POST["password"];
+  $pass  = $_POST["password"];
 
   $req = $bdd->prepare("SELECT id, name, email, password_hash, role FROM users WHERE email = :email");
   $req->execute(["email" => $email]);
@@ -21,9 +21,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
   if ($user && password_verify($pass, $user["password_hash"])) {
 
-    $_SESSION["user_id"] = $user["id"];
+    $_SESSION["user_id"]   = $user["id"];
     $_SESSION["user_name"] = $user["name"];
-    $_SESSION["role"] = $user["role"];
+    $_SESSION["role"]      = $user["role"];
 
     header("Location: accueil.php");
     exit;
@@ -33,62 +33,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign In</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Se connecter</title>
+  <link rel="stylesheet" href="index.css">
 </head>
-<body>
+<body class="page-wrapper">
 
-<div class="page">
+<div class="form-card">
 
-  <!-- LEFT PANEL -->
-  <section class="left">
-    <div class="logo">CLINIQUE LOGO</div>
+  <h1>Se connecter</h1>
+  <p class="subtitle">Connecte-toi pour gérer tes rendez-vous en ligne.</p>
 
-    <h1>Bienvenue</h1>
-    <p class="subtitle">
-      Connecte-toi pour gérer tes rendez-vous.
-    </p>
-  </section>
+  <?php if ($error_msg): ?>
+    <div class="alert"><?= $error_msg ?></div>
+  <?php endif; ?>
 
-  <!-- RIGHT PANEL -->
-  <section class="right">
+  <form method="POST" class="form-content">
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" required>
 
-    <div class="card big">
-      <div class="tabs">
-        <a class="tab active" href="./login.php">Sign In</a>
-        <a class="tab" href="./register.php">Sign Up</a>
-      </div>
+    <label for="password">Mot de passe</label>
+    <input type="password" id="password" name="password" required>
 
-      <h2>Sign In</h2>
-      <p class="hint">Accède à ton compte.</p>
+    <button type="submit" class="primary-btn">Se connecter</button>
+  </form>
 
-      <?php if ($error_msg): ?>
-        <div class="alert"><?= htmlspecialchars($error_msg) ?></div>
-      <?php endif; ?>
-
-      <form method="POST">
-        <label>Email</label>
-        <input type="email" name="email" required>
-
-        <label>Mot de passe</label>
-        <input type="password" name="password" required>
-
-        <button type="submit" class="btn">SIGN IN</button>
-      </form>
-    
-      <a class="tab" href="./register.php">Sign Up</a>
-      <p class="bottom">
-        Pas de compte ? <a href="./register.php">Créer un compte</a>
-      </p>
-    </div>
-
-  </section>
+  <p class="bottom-text">
+    Pas de compte ? <a href="register.php">Créer un compte</a>
+  </p>
 
 </div>
 
