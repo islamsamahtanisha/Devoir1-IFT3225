@@ -1,4 +1,8 @@
 <?php
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
 
 $bdd = new PDO(
@@ -15,11 +19,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $email = $_POST["email"];
   $pass  = $_POST["password"];
 
-  $req = $bdd->prepare("SELECT id, name, email, password_hash, role FROM users WHERE email = :email");
+  $req = $bdd->prepare("SELECT id, name, email, user_passwd, role FROM users WHERE email = :email");
   $req->execute(["email" => $email]);
   $user = $req->fetch();
 
-  if ($user && password_verify($pass, $user["password_hash"])) {
+  if ($user && password_verify($pass, $user["user_passwd"])) {
 
     $_SESSION["user_id"]   = $user["id"];
     $_SESSION["user_name"] = $user["name"];
@@ -40,15 +44,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <title>Se connecter</title>
   <link rel="stylesheet" href="index.css">
 </head>
-<body class="page-wrapper">
+<body class="login-page">
 
-<div class="form-card">
+<div class="login-box">
 
   <h1>Se connecter</h1>
-  <p class="subtitle">Connecte-toi pour gérer tes rendez-vous en ligne.</p>
+  <p>Connecte-toi pour gérer tes rendez-vous en ligne.</p>
 
   <?php if ($error_msg): ?>
-    <div class="alert"><?= $error_msg ?></div>
+    <div class="alert"><?= htmlspecialchars($error_msg) ?></div>
   <?php endif; ?>
 
   <form method="POST" class="form-content">
